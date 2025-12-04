@@ -100,7 +100,7 @@ PROGRAMS = {
         "tag": "Hands-on robotics & mechatronics",
         "outline": ["Intro to robotics & components", "Sensors & actuators", "Microcontrollers (Arduino / MicroPython)", "Mobile/line-following robot project", "Final autonomous challenge"],
         # KEPT: Your local image path
-        "image": "C:/Users/USER/Downloads/iStar 2.jpg"
+        "image": "iStar 2.jpg"
     },
     "Python Programming": {
         "tag": "From basics to project-based coding",
@@ -269,4 +269,5 @@ elif menu == "Contact":
     © {datetime.now().year} iStar Smart Kids | Inspiring Young Innovators 🌠<br>
     <small>Built with ❤️ using Streamlit — Local time: {datetime.now(LOCAL_TZ).strftime("%Y-%m-%d %H:%M:%S %Z")}</small>
     </p>
+
     """, unsafe_allow_html=True)
