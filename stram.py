@@ -91,12 +91,12 @@ ensure_files()
 PROGRAMS = {
     "Robotics": {
         "tag": "Hands-on robotics & mechatronics",
-        "outline": ["Intro to robotics", "Sensors & actuators", "Microcontrollers", "Mobile robot project", "Autonomous challenge"],
+        "outline": ["Intro to robotics & components", "Sensors & actuators", "Microcontrollers (Arduino / MicroPython)", "Mobile/line-following robot project", "Final autonomous challenge"],
         "image": "iStar 2.jpg" 
     },
     "Python Programming": {
         "tag": "From basics to project-based coding",
-        "outline": ["Python basics", "Lists, dicts & files", "Mini apps", "Intro to Pandas", "Build a Streamlit app"],
+        "outline": ["Python basics: variables, loops, functions", "Lists, dicts & files", "Mini apps (calculator, quiz)", "Intro to Pandas & data handling", "Build a Streamlit app"],
         "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c"
     },
     "Data Analysis": {
@@ -106,8 +106,7 @@ PROGRAMS = {
     },
     "Electronics": {
         "tag": "Circuits, sensors, and physical computing",
-        "outline": ["Basic electronics", "Breadboard projects", "Microcontrollers", "IoT concepts", "Interactive device"],
-        # UPDATED: High quality, non-distorted electronics image
+        "outline": ["Basic electronics & components", "Breadboard projects", "Microcontroller interfacing", "Simple IoT concepts", "Final interactive device"],
         "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b" 
     },
     "Space Technology": {
@@ -118,7 +117,6 @@ PROGRAMS = {
 }
 
 # -------------------- SIDEBAR NAVIGATION --------------------
-# This maintains the exact layout you liked originally
 st.sidebar.title("Navigate")
 menu = st.sidebar.radio("", ["Home", "Programs", "Contact"])
 
@@ -127,7 +125,6 @@ if menu == "Home":
     log_event("view_home")
     
     # --- LOGO & WELCOME SECTION ---
-    # Centered Logo
     col_l, col_c, col_r = st.columns([1, 1, 1])
     with col_c:
         try:
@@ -146,23 +143,23 @@ if menu == "Home":
     st.markdown("---")
 
     # --- IMAGES SECTION ---
-    # Maintained exact spacing structure using columns
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("**🤝 Teamwork**")
         try:
-            # using use_container_width keeps it fitted to the column, not stretched/distorted
-            st.image("Teamwork.jpeg", caption="Collaborative Learning", use_container_width=True)
+            # CHANGED: width=300 makes it a neat thumbnail size
+            st.image("Teamwork.jpeg", caption="Collaborative Learning", width=300)
         except:
-            st.info("Teamwork.jpeg not found")
+            st.image("https://images.unsplash.com/photo-1519389950473-47ba0277781c", caption="Teamwork", width=300)
             
     with col2:
         st.markdown("**💡 Innovation**")
         try:
-            st.image("Innovation.jpeg", caption="Creative Solutions", use_container_width=True)
+            # CHANGED: width=300 makes it a neat thumbnail size
+            st.image("Innovation.jpeg", caption="Creative Solutions", width=300)
         except:
-            st.info("Innovation.jpeg not found")
+            st.image("https://images.unsplash.com/photo-1521790797524-b2497295b8a0", caption="Innovation", width=300)
     
     st.markdown("---")
     
@@ -181,7 +178,6 @@ elif menu == "Programs":
     selected_program = params.get("program", None)
 
     for name, meta in PROGRAMS.items():
-        # Maintained the compact 1:2 column ratio from original code
         col1, col2 = st.columns([1, 2])
         with col1:
             try:
@@ -244,7 +240,7 @@ elif menu == "Programs":
                         log_event("register", meta=r_email)
         st.divider()
 
-# -------------------- CONTACT (Kept the nice Colorful Layout) --------------------
+# -------------------- CONTACT (Colorful Layout) --------------------
 elif menu == "Contact":
     log_event("view_contact")
     st.header("📬 Contact Us")
