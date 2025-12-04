@@ -107,8 +107,7 @@ PROGRAMS = {
     "Electronics": {
         "tag": "Circuits, sensors, and physical computing",
         "outline": ["Basic electronics & components", "Breadboard projects", "Microcontrollers", "IoT concepts", "Interactive device"],
-        # FIXED: Just the filename string here. We handle size in the loop below.
-        "image": "Electronics.jpeg"
+        "image": "Electronics.jpeg" 
     },
     "Space Technology": {
         "tag": "Astronomy and practical space concepts",
@@ -117,12 +116,12 @@ PROGRAMS = {
     }
 }
 
-# -------------------- SIDEBAR NAVIGATION --------------------
-st.sidebar.title("Navigate")
-menu = st.sidebar.radio("", ["Home", "Programs", "Contact"])
+# -------------------- TOP NAVIGATION (TABS) --------------------
+# This replaces the Sidebar with Tabs at the very top of the page
+tab_home, tab_programs, tab_contact = st.tabs(["🏠 Home", "🎓 Programs", "📬 Contact"])
 
-# -------------------- HOME --------------------
-if menu == "Home":
+# -------------------- HOME TAB --------------------
+with tab_home:
     log_event("view_home")
     
     # --- LOGO & WELCOME SECTION ---
@@ -143,6 +142,7 @@ if menu == "Home":
     st.markdown("---")
 
     # --- IMAGES SECTION (Centered & Close) ---
+    # 4 columns: [Spacer, Image1, Image2, Spacer]
     pad_left, col1, col2, pad_right = st.columns([1, 2, 2, 1])
     
     with col1:
@@ -167,22 +167,29 @@ if menu == "Home":
     st.markdown("### 🌠 Vision")
     st.info("To empower every child to think critically, innovate boldly, and impact the world through science and technology.")
 
-# -------------------- PROGRAMS --------------------
-elif menu == "Programs":
+# -------------------- PROGRAMS TAB --------------------
+with tab_programs:
     log_event("view_programs")
     st.header("🎓 Explore Our Programs")
 
-    params = st.query_params
-    selected_program = params.get("program", None)
-
+    # We need to track query params manually or just use a selectbox inside the tab for registration
+    # Since we are in tabs, we can list them all.
+    
+    # Let's keep the layout: Loop through programs
     for name, meta in PROGRAMS.items():
+        st.markdown("---")
         col1, col2 = st.columns([1, 2])
+        
         with col1:
             try:
-                # UPDATED: width=200 makes all program images neat thumbnails
-                st.image(meta["image"], width=200)
+                # --- ONLY RESIZE ELECTRONICS ---
+                if name == "Electronics":
+                    st.image(meta["image"], width=200) 
+                else:
+                    st.image(meta["image"], use_container_width=True) 
             except:
                 st.error(f"Image not found: {meta['image']}")
+        
         with col2:
             st.subheader(name)
             st.write(f"_{meta['tag']}_")
@@ -190,57 +197,52 @@ elif menu == "Programs":
                 for i, item in enumerate(meta["outline"], start=1):
                     st.write(f"{i}. {item}")
             
-            if st.button(f"Register for {name}", key=name):
-                st.query_params.update({"program": name})
-
-        # Registration Form
-        if selected_program == name:
-            st.divider()
-            st.markdown(f"### 📝 Register for {name}")
-            with st.form(f"register_form_{name}"):
-                r_name = st.text_input("Full Name")
-                r_email = st.text_input("Email Address")
-                r_password = st.text_input("Create Password", type="password")
-                submitted = st.form_submit_button("Register Now")
-            
-            if submitted:
-                if not (r_name and r_email and r_password):
-                    st.error("❌ Please fill in all fields.")
-                else:
-                    df = pd.read_csv(STUDENTS_FILE)
-                    if r_email in df["Email"].astype(str).tolist():
-                        st.warning("⚠️ Email already registered.")
+            # Using st.popover or st.expander for registration form to keep the page clean
+            # (Simulating the "Register" button logic from before but adapting to Tabs)
+            with st.expander(f"📝 Register for {name}"):
+                with st.form(f"register_form_{name}"):
+                    r_name = st.text_input("Full Name")
+                    r_email = st.text_input("Email Address")
+                    r_password = st.text_input("Create Password", type="password")
+                    submitted = st.form_submit_button("Register Now")
+                
+                if submitted:
+                    if not (r_name and r_email and r_password):
+                        st.error("❌ Please fill in all fields.")
                     else:
-                        student_id = generate_student_id()
-                        registered_at = datetime.now(LOCAL_TZ).strftime("%Y-%m-%d %H:%M:%S %Z")
-                        row = {
-                            "StudentID": student_id, "Name": r_name, "Email": r_email,
-                            "PasswordHash": hash_password(r_password), "Program": name, "RegisteredAt": registered_at
-                        }
-                        append_csv(STUDENTS_FILE, row)
-                        
-                        st.success(f"🎉 Registration complete! Student ID: {student_id}")
-                        st.balloons()
+                        df = pd.read_csv(STUDENTS_FILE)
+                        if r_email in df["Email"].astype(str).tolist():
+                            st.warning("⚠️ Email already registered.")
+                        else:
+                            student_id = generate_student_id()
+                            registered_at = datetime.now(LOCAL_TZ).strftime("%Y-%m-%d %H:%M:%S %Z")
+                            row = {
+                                "StudentID": student_id, "Name": r_name, "Email": r_email,
+                                "PasswordHash": hash_password(r_password), "Program": name, "RegisteredAt": registered_at
+                            }
+                            append_csv(STUDENTS_FILE, row)
+                            
+                            st.success(f"🎉 Registration complete! Student ID: {student_id}")
+                            st.balloons()
 
-                        student_msg = f"Hello {r_name},\n\nWelcome to Spacebot Limited!\nYou have successfully registered for {name}.\nStudent ID: {student_id}\n\nSee you in class!"
-                        send_email_plain(r_email, "Registration Confirmed - Spacebot", student_msg)
-                        
-                        df_updated = pd.read_csv(STUDENTS_FILE)
-                        csv_buffer = io.StringIO()
-                        df_updated.to_csv(csv_buffer, index=False)
-                        
-                        send_email_plain(
-                            SENDER_EMAIL, 
-                            f"New Sign-up: {r_name}", 
-                            f"New Registration Alert!\n\nName: {r_name}\nProgram: {name}", 
-                            attachment=csv_buffer, 
-                            filename="students_database.csv"
-                        )
-                        log_event("register", meta=r_email)
-        st.divider()
+                            student_msg = f"Hello {r_name},\n\nWelcome to Spacebot Limited!\nYou have successfully registered for {name}.\nStudent ID: {student_id}\n\nSee you in class!"
+                            send_email_plain(r_email, "Registration Confirmed - Spacebot", student_msg)
+                            
+                            df_updated = pd.read_csv(STUDENTS_FILE)
+                            csv_buffer = io.StringIO()
+                            df_updated.to_csv(csv_buffer, index=False)
+                            
+                            send_email_plain(
+                                SENDER_EMAIL, 
+                                f"New Sign-up: {r_name}", 
+                                f"New Registration Alert!\n\nName: {r_name}\nProgram: {name}", 
+                                attachment=csv_buffer, 
+                                filename="students_database.csv"
+                            )
+                            log_event("register", meta=r_email)
 
-# -------------------- CONTACT --------------------
-elif menu == "Contact":
+# -------------------- CONTACT TAB --------------------
+with tab_contact:
     log_event("view_contact")
     st.header("📬 Contact Us")
     st.write("We would love to hear from you. Visit us or send a message below!")
