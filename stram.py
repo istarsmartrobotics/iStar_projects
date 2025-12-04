@@ -21,6 +21,23 @@ LOCAL_TZ = pytz.timezone("Africa/Accra")
 SENDER_EMAIL = "istarsmartrobotics@gmail.com"
 APP_PASSWORD = "fdqz bspu bqxc qiiu".replace(" ", "")
 
+# -------------------- CUSTOM CSS FOR TABS --------------------
+# This makes the tabs Bold, Medium Size, and Visible
+st.markdown("""
+<style>
+    /* Target the tab labels */
+    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+        font-size: 1.2rem; /* Medium size (approx 19px) */
+        font-weight: bold; /* Bold text */
+        color: #31333F;    /* Dark visible color */
+    }
+    /* Optional: Change color when selected */
+    .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] [data-testid="stMarkdownContainer"] p {
+        color: #2F80ED;    /* Blue when active */
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # -------------------- HELPERS --------------------
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
@@ -117,7 +134,7 @@ PROGRAMS = {
 }
 
 # -------------------- TOP NAVIGATION (TABS) --------------------
-# This replaces the Sidebar with Tabs at the very top of the page
+# These tabs are now styled by the CSS at the top to be BOLD and VISIBLE
 tab_home, tab_programs, tab_contact = st.tabs(["🏠 Home", "🎓 Programs", "📬 Contact"])
 
 # -------------------- HOME TAB --------------------
@@ -141,7 +158,7 @@ with tab_home:
     
     st.markdown("---")
 
-    # --- IMAGES SECTION (Centered & Close) ---
+    # --- IMAGES SECTION ---
     # 4 columns: [Spacer, Image1, Image2, Spacer]
     pad_left, col1, col2, pad_right = st.columns([1, 2, 2, 1])
     
@@ -172,21 +189,16 @@ with tab_programs:
     log_event("view_programs")
     st.header("🎓 Explore Our Programs")
 
-    # We need to track query params manually or just use a selectbox inside the tab for registration
-    # Since we are in tabs, we can list them all.
-    
-    # Let's keep the layout: Loop through programs
+    # Loop through programs
     for name, meta in PROGRAMS.items():
         st.markdown("---")
         col1, col2 = st.columns([1, 2])
         
         with col1:
             try:
-                # --- ONLY RESIZE ELECTRONICS ---
-                if name == "Electronics":
-                    st.image(meta["image"], width=200) 
-                else:
-                    st.image(meta["image"], use_container_width=True) 
+                # --- ALL IMAGES SET TO WIDTH=300 ---
+                # This ensures Robotics, Electronics, and all others are equal size
+                st.image(meta["image"], width=300) 
             except:
                 st.error(f"Image not found: {meta['image']}")
         
@@ -197,8 +209,7 @@ with tab_programs:
                 for i, item in enumerate(meta["outline"], start=1):
                     st.write(f"{i}. {item}")
             
-            # Using st.popover or st.expander for registration form to keep the page clean
-            # (Simulating the "Register" button logic from before but adapting to Tabs)
+            # Registration Form inside Expander
             with st.expander(f"📝 Register for {name}"):
                 with st.form(f"register_form_{name}"):
                     r_name = st.text_input("Full Name")
