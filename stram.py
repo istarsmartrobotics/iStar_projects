@@ -106,7 +106,7 @@ PROGRAMS = {
     },
     "Electronics": {
         "tag": "Circuits, sensors, and physical computing",
-        "outline": ["Basic electronics & components", "Breadboard projects", "Microcontroller interfacing", "Simple IoT concepts", "Final interactive device"],
+        "outline": ["Basic electronics & components", "Breadboard projects", "Microcontrollers", "IoT concepts", "Interactive device"],
         "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b" 
     },
     "Space Technology": {
@@ -125,6 +125,7 @@ if menu == "Home":
     log_event("view_home")
     
     # --- LOGO & WELCOME SECTION ---
+    # Centered Logo
     col_l, col_c, col_r = st.columns([1, 1, 1])
     with col_c:
         try:
@@ -142,13 +143,15 @@ if menu == "Home":
     
     st.markdown("---")
 
-    # --- IMAGES SECTION ---
-    col1, col2 = st.columns(2)
+    # --- IMAGES SECTION (ADJUSTED) ---
+    # I used 4 columns: [Spacer, Image1, Image2, Spacer]
+    # Ratios [1, 2, 2, 1] keeps them centered and closer together
+    pad_left, col1, col2, pad_right = st.columns([1, 2, 2, 1])
     
     with col1:
         st.markdown("**🤝 Teamwork**")
         try:
-            # CHANGED: width=300 makes it a neat thumbnail size
+            # width=300 maintains thumbnail size
             st.image("Teamwork.jpeg", caption="Collaborative Learning", width=300)
         except:
             st.image("https://images.unsplash.com/photo-1519389950473-47ba0277781c", caption="Teamwork", width=300)
@@ -156,7 +159,7 @@ if menu == "Home":
     with col2:
         st.markdown("**💡 Innovation**")
         try:
-            # CHANGED: width=300 makes it a neat thumbnail size
+            # width=300 maintains thumbnail size
             st.image("Innovation.jpeg", caption="Creative Solutions", width=300)
         except:
             st.image("https://images.unsplash.com/photo-1521790797524-b2497295b8a0", caption="Innovation", width=300)
