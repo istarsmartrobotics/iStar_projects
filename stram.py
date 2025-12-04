@@ -107,7 +107,7 @@ PROGRAMS = {
     "Electronics": {
         "tag": "Circuits, sensors, and physical computing",
         "outline": ["Basic electronics & components", "Breadboard projects", "Microcontrollers", "IoT concepts", "Interactive device"],
-        "image": "Electronics.jpeg" 
+        "image": ["Electronics.jpeg" , width = 200]
     },
     "Space Technology": {
         "tag": "Astronomy and practical space concepts",
@@ -283,5 +283,6 @@ elif menu == "Contact":
     <small>Built with ❤️ using Streamlit — Local time: {datetime.now(LOCAL_TZ).strftime("%Y-%m-%d %H:%M:%S %Z")}</small>
     </p>
     """, unsafe_allow_html=True)
+
 
 
