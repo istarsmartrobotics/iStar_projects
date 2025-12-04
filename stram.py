@@ -107,7 +107,8 @@ PROGRAMS = {
     "Electronics": {
         "tag": "Circuits, sensors, and physical computing",
         "outline": ["Basic electronics & components", "Breadboard projects", "Microcontrollers", "IoT concepts", "Interactive device"],
-        "image": ["Electronics.jpeg" , width = 200]
+        # FIXED: Just the filename string here. We handle size in the loop below.
+        "image": "Electronics.jpeg"
     },
     "Space Technology": {
         "tag": "Astronomy and practical space concepts",
@@ -125,11 +126,9 @@ if menu == "Home":
     log_event("view_home")
     
     # --- LOGO & WELCOME SECTION ---
-    # Centered Logo
     col_l, col_c, col_r = st.columns([1, 1, 1])
     with col_c:
         try:
-            # Clean, professional logo size
             st.image("iStar_logo.png", width=200) 
         except:
             st.warning("Logo not found")
@@ -143,15 +142,12 @@ if menu == "Home":
     
     st.markdown("---")
 
-    # --- IMAGES SECTION (ADJUSTED) ---
-    # I used 4 columns: [Spacer, Image1, Image2, Spacer]
-    # Ratios [1, 2, 2, 1] keeps them centered and closer together
+    # --- IMAGES SECTION (Centered & Close) ---
     pad_left, col1, col2, pad_right = st.columns([1, 2, 2, 1])
     
     with col1:
         st.markdown("**🤝 Teamwork**")
         try:
-            # width=300 maintains thumbnail size
             st.image("Teamwork.jpeg", caption="Collaborative Learning", width=300)
         except:
             st.image("https://images.unsplash.com/photo-1519389950473-47ba0277781c", caption="Teamwork", width=300)
@@ -159,7 +155,6 @@ if menu == "Home":
     with col2:
         st.markdown("**💡 Innovation**")
         try:
-            # width=300 maintains thumbnail size
             st.image("Innovation.jpeg", caption="Creative Solutions", width=300)
         except:
             st.image("https://images.unsplash.com/photo-1521790797524-b2497295b8a0", caption="Innovation", width=300)
@@ -184,7 +179,8 @@ elif menu == "Programs":
         col1, col2 = st.columns([1, 2])
         with col1:
             try:
-                st.image(meta["image"], use_container_width=True)
+                # UPDATED: width=200 makes all program images neat thumbnails
+                st.image(meta["image"], width=200)
             except:
                 st.error(f"Image not found: {meta['image']}")
         with col2:
@@ -243,7 +239,7 @@ elif menu == "Programs":
                         log_event("register", meta=r_email)
         st.divider()
 
-# -------------------- CONTACT (Colorful Layout) --------------------
+# -------------------- CONTACT --------------------
 elif menu == "Contact":
     log_event("view_contact")
     st.header("📬 Contact Us")
@@ -283,6 +279,3 @@ elif menu == "Contact":
     <small>Built with ❤️ using Streamlit — Local time: {datetime.now(LOCAL_TZ).strftime("%Y-%m-%d %H:%M:%S %Z")}</small>
     </p>
     """, unsafe_allow_html=True)
-
-
-
