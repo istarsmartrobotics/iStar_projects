@@ -96,7 +96,7 @@ class TwoLogos(Flowable):
 # ---------------------------
 # PDF GENERATION
 # ---------------------------
-def generate_pdf(student, payment, items):
+def generate_pdf(student, payment, items, amount_paid):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)
 
@@ -135,7 +135,19 @@ def generate_pdf(student, payment, items):
         ])
         grand_total += item["total"]
 
+    # Calculate Balance and Status
+    balance = grand_total - amount_paid
+    if balance <= 0:
+        balance = 0.0
+        status_text = "Fully Paid"
+    else:
+        status_text = "Part Payment"
+
+    # Append totals and status to table
     table_data.append(["", "", "Grand Total", f"GHS {grand_total:.2f}"])
+    table_data.append(["", "", "Amount Paid", f"GHS {amount_paid:.2f}"])
+    table_data.append(["", "", "Balance", f"GHS {balance:.2f}"])
+    table_data.append(["", "", "Status", status_text])
 
     table = Table(table_data, colWidths=[60*mm, 20*mm, 35*mm, 35*mm])
     table.setStyle(TableStyle([
@@ -143,6 +155,8 @@ def generate_pdf(student, payment, items):
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
+        # Bold the Total/Status rows at the bottom
+        ('FONTNAME', (2, -4), (-1, -1), 'Helvetica-Bold'),
     ]))
 
     story.append(table)
@@ -159,8 +173,15 @@ def generate_pdf(student, payment, items):
 # GENERATE PDF BUTTON
 # ---------------------------
 if len(st.session_state.receipt_items) > 0:
+    
+    # Calculate current total for default input value
+    current_total = sum(item['total'] for item in st.session_state.receipt_items)
+    
+    # NEW INPUT: Amount Paid
+    amount_paid = st.number_input("Amount Paid (GHS)", min_value=0.0, value=float(current_total), step=50.0)
+
     if st.button("Generate PDF Receipt"):
-        pdf = generate_pdf(student_name, payment_method, st.session_state.receipt_items)
+        pdf = generate_pdf(student_name, payment_method, st.session_state.receipt_items, amount_paid)
         st.download_button(
             "📥 Download Receipt PDF",
             data=pdf,
